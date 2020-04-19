@@ -66,8 +66,8 @@ class Net(nn.Module):
         self.layer3 = make_layers(128,256,2,True)
         # 128 16 8
         self.layer4 = make_layers(256,512,2,True)
-        # 256 8 4
-        self.avgpool = nn.AvgPool2d((8,4),1)
+        # 256 8 8
+        self.avgpool = nn.AvgPool2d((8,8),1)
         # 256 1 1 
         self.reid = reid
         self.classifier = nn.Sequential(
@@ -77,7 +77,7 @@ class Net(nn.Module):
             nn.Dropout(),
             nn.Linear(256, num_classes),
         )
-    
+
     def forward(self, x):
         x = self.conv(x)
         x = self.layer1(x)
