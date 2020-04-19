@@ -82,9 +82,9 @@ def train(epoch):
     start = time.time()
     for idx, (inputs, labels, positives, negatives) in enumerate(trainloader):
         # forward
-        inputs = inputs.to(device),
-        positives = positives.to(device),
-        negatives = negatives.to(device),
+        inputs = inputs.to(device)
+        positives = positives.to(device)
+        negatives = negatives.to(device)
         labels = labels.to(device)
 
         outputs, output_features = net(inputs)
