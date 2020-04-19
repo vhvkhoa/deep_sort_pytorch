@@ -46,4 +46,4 @@ class TripletFolder(datasets.ImageFolder):
         '''
 
         c, h, w = pos.shape
-        return sample, pos, neg, target
+        return sample, target, pos, neg
