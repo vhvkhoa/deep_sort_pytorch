@@ -88,7 +88,7 @@ def train(epoch):
         positives = positives.to(device)
         negatives = negatives.to(device)
 
-        _, output_features = net(inputs)
+        outputs, output_features = net(inputs)
         _, positive_features = net(positives)
         _, negative_features = net(negatives)
 
