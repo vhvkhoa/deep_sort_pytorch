@@ -198,7 +198,7 @@ def lr_decay():
 
 
 def main():
-    for epoch in range(start_epoch, start_epoch + 40):
+    for epoch in range(start_epoch, start_epoch + 20):
         train_loss, train_err = train(epoch)
         test_err = test(epoch)
         draw_curve(epoch, train_loss, train_err, train_loss, test_err)
