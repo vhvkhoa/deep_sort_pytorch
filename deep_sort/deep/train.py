@@ -134,10 +134,10 @@ def test(epoch):
             total += labels.size(0)
         all_features = torch.cat(all_features, dim=0)
         all_labels = np.concatenate(all_labels, axis=0)
-        scores = features.mm(features.t())
+        scores = all_features.mm(all_features.t())
         scores.masked_fill_(torch.eye(*scores.size()).byte(), 0)
         top1s = scores.topk(5, dim=1)[1][:, 0]
-        correct = labels[top1s].eq(labels).sum().item()
+        correct = all_labels[top1s].eq(all_labels).sum().item()
 
         print("Testing ...")
         end = time.time()
