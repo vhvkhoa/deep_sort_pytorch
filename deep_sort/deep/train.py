@@ -159,7 +159,7 @@ def test(epoch):
             os.mkdir('checkpoint')
         torch.save(checkpoint, './checkpoint/ckpt.t7')
 
-    return test_loss / len(testloader), 1. - correct / total
+    return 1. - correct / total
 
 
 # plot figure
@@ -200,8 +200,8 @@ def lr_decay():
 def main():
     for epoch in range(start_epoch, start_epoch + 40):
         train_loss, train_err = train(epoch)
-        test_loss, test_err = test(epoch)
-        draw_curve(epoch, train_loss, train_err, test_loss, test_err)
+        test_err = test(epoch)
+        draw_curve(epoch, train_loss, train_err, train_loss, test_err)
         if (epoch + 1) % 20 == 0:
             lr_decay()
 
