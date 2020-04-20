@@ -15,19 +15,13 @@ class TripletFolder(datasets.ImageFolder):
         pos_index1 = np.argwhere(self.targets == target)
         pos_index2 = pos_index1.flatten()
         pos_index3 = np.setdiff1d(pos_index2, index)
-        try:
-            rand = np.random.randint(0, len(pos_index3) - 1)
-        except ValueError:
-            print(pos_index1)
-            print(pos_index2)
-            print(pos_index3)
-            print(target, self.classes[target])
+        rand = np.random.randint(0, len(pos_index3))
         return self.samples[pos_index3[rand]][0]
 
     def _get_neg_sample(self, target):
         neg_index = np.argwhere(self.targets != target)
         neg_index = neg_index.flatten()
-        rand = random.randint(0, len(neg_index) - 1)
+        rand = random.randint(0, len(neg_index))
         return self.samples[neg_index[rand]]
 
     def __getitem__(self, index):
