@@ -66,8 +66,7 @@ if args.resume:
 net.to(device)
 
 # loss and optimizer
-triplet_criterion = torch.nn.TripletMarginLoss()
-classification_criterion = torch.nn.CrossEntropyLoss()
+criterion = torch.nn.TripletMarginLoss()
 # optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
 optimizer = torch.optim.Adam(net.parameters(), args.lr, weight_decay=5e-4)
 best_acc = 0.
@@ -94,9 +93,7 @@ def train(epoch):
         _, positive_features = net(positives)
         _, negative_features = net(negatives)
 
-        triplet_loss = triplet_criterion(output_features, positive_features, negative_features)
-        class_loss = classification_criterion(outputs, labels)
-        loss = triplet_loss + class_loss
+        loss = criterion(output_features, positive_features, negative_features)
 
         # backward
         optimizer.zero_grad()
