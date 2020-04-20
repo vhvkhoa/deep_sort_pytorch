@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description="Train on market1501")
 parser.add_argument("--data-dir", default='data', type=str)
 parser.add_argument("--no-cuda", action="store_true")
 parser.add_argument("--gpu-id", default=0, type=int)
-parser.add_argument("--lr", default=0.1, type=float)
+parser.add_argument("--lr", default=0.001, type=float)
 parser.add_argument("--interval", '-i', default=20, type=int)
 parser.add_argument('--resume', '-r', action='store_true')
 args = parser.parse_args()
@@ -67,7 +67,8 @@ net.to(device)
 # loss and optimizer
 triplet_criterion = torch.nn.TripletMarginLoss()
 classification_criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
+# optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=5e-4)
+optimizer = torch.optim.Adam(net.parameters(), args.lr, weight_decay=5e-4)
 best_acc = 0.
 
 
