@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 
+import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.backends.cudnn as cudnn
@@ -123,19 +124,23 @@ def train(epoch):
 def test(epoch):
     global best_acc
     net.eval()
-    test_loss = 0.
-    correct = 0
-    total = 0
+    correct, total = 0, 0
     start = time.time()
     with torch.no_grad():
+        features, labels = [], []
         for idx, (inputs, labels) in enumerate(testloader):
-            inputs, labels = inputs.to(device), labels.to(device)
-            outputs, _ = net(inputs)
-            # loss = criterion(outputs, labels)
-
-            # test_loss += loss.item()
-            correct += outputs.max(dim=1)[1].eq(labels).sum().item()
+            inputs = inputs.to(device)
+            _, output_features = net(inputs)
+            features.append(output_features.cpu())
+            labels.append(labels.numpy())
+            # correct += outputs.max(dim=1)[1].eq(labels).sum().item()
             total += labels.size(0)
+        features = torch.cat(features, dim=0)
+        labels = np.concatenate(labels, axis=0)
+        scores = features.mm(features.t())
+        scores.masked_fill_(torch.eye(*scores.size()).byte, 0)
+        top1s = scores.topk(5, dim=1)[1][:, 0]
+        top1corrects = labels[top1s].eq(labels).sum().item()
 
         print("Testing ...")
         end = time.time()
