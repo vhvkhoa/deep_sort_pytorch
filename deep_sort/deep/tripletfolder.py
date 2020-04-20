@@ -12,14 +12,17 @@ class TripletFolder(datasets.ImageFolder):
         self.targets = targets
 
     def _get_pos_sample(self, target, index):
-        pos_index = np.argwhere(self.targets == target)
-        pos_index = pos_index.flatten()
-        pos_index = np.setdiff1d(pos_index, index)
+        pos_index1 = np.argwhere(self.targets == target)
+        pos_index2 = pos_index1.flatten()
+        pos_index3 = np.setdiff1d(pos_index2, index)
         try:
-            rand = np.random.randint(0, len(pos_index) - 1)
+            rand = np.random.randint(0, len(pos_index3) - 1)
         except ValueError:
-            print(pos_index, self.classes[target])
-        return self.samples[pos_index[rand]][0]
+            print(pos_index1)
+            print(pos_index2)
+            print(pos_index3)
+            print(target, self.classes[target])
+        return self.samples[pos_index3[rand]][0]
 
     def _get_neg_sample(self, target):
         neg_index = np.argwhere(self.targets != target)
