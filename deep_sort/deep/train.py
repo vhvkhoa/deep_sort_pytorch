@@ -127,16 +127,16 @@ def test(epoch):
         for idx, (inputs, labels) in enumerate(testloader):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs, _ = net(inputs)
-            loss = criterion(outputs, labels)
+            # loss = criterion(outputs, labels)
 
-            test_loss += loss.item()
+            # test_loss += loss.item()
             correct += outputs.max(dim=1)[1].eq(labels).sum().item()
             total += labels.size(0)
 
         print("Testing ...")
         end = time.time()
-        print("[progress:{:.1f}%]time:{:.2f}s Loss:{:.5f} Correct:{}/{} Acc:{:.3f}%".format(
-            100. * (idx + 1) / len(testloader), end - start, test_loss / len(testloader), correct, total, 100. * correct / total
+        print("[progress:{:.1f}%]time:{:.2f}s Correct:{}/{} Acc:{:.3f}%".format(
+            100. * (idx + 1) / len(testloader), end - start, correct, total, 100. * correct / total
         ))
 
     # saving checkpoint
