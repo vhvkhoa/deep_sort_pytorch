@@ -87,9 +87,8 @@ def train(epoch):
         inputs = inputs.to(device)
         positives = positives.to(device)
         negatives = negatives.to(device)
-        labels = labels.to(device)
 
-        outputs, output_features = net(inputs)
+        _, output_features = net(inputs)
         _, positive_features = net(positives)
         _, negative_features = net(negatives)
 
@@ -124,16 +123,16 @@ def test(epoch):
     correct, total = 0, 0
     start = time.time()
     with torch.no_grad():
-        features, labels = [], []
+        all_features, all_labels = [], []
         for idx, (inputs, labels) in enumerate(testloader):
             inputs = inputs.to(device)
-            _, output_features = net(inputs)
-            features.append(output_features.cpu())
-            labels.append(labels.numpy())
+            _, features = net(inputs)
+            all_features.append(features.cpu())
+            all_labels.append(labels.numpy())
             # correct += outputs.max(dim=1)[1].eq(labels).sum().item()
             total += labels.size(0)
-        features = torch.cat(features, dim=0)
-        labels = np.concatenate(labels, axis=0)
+        all_features = torch.cat(features, dim=0)
+        all_labels = np.concatenate(labels, axis=0)
         scores = features.mm(features.t())
         scores.masked_fill_(torch.eye(*scores.size()).byte, 0)
         top1s = scores.topk(5, dim=1)[1][:, 0]
