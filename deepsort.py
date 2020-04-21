@@ -73,7 +73,6 @@ class VideoTracker(object):
                     bbox_xyxyc[:, 2] - bbox_xyxyc[:, 0],
                     bbox_xyxyc[:, 3] - bbox_xyxyc[:, 1]
                 ], axis=0)
-                print(bbox_xywh)
                 bbox_xywh[:, 3:] *= 1.2  # bbox dilation just in case bbox too small
                 cls_conf = bbox_xyxyc[:, 4]
 
