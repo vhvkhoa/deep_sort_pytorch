@@ -35,7 +35,7 @@ class VideoTracker(object):
         self.im_height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
         assert self.vdo.isOpened()
 
-        with open(self.args.box_file, 'r') as f:
+        with open(self.args.box_file, 'rb') as f:
             self.bbox = pkl.load(f)
 
         if self.args.save_path:
