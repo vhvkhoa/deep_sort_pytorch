@@ -39,8 +39,8 @@ class VideoTracker(object):
             self.bbox = pkl.load(f)
 
         if self.args.save_path:
-            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-            self.writer = cv2.VideoWriter(self.args.save_path, fourcc, 20, (self.im_width, self.im_height))
+            fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+            self.writer = cv2.VideoWriter(self.args.save_path, fourcc, 30, (self.im_width, self.im_height))
 
         return self
 
@@ -106,7 +106,7 @@ def parse_args():
     parser.add_argument("--box_file", type=str, default="./bboxes/cam_1.mp4.json")
     parser.add_argument("--frame_interval", type=int, default=1)
     parser.add_argument("--class_names", type=list, default=['car', 'truck'])
-    parser.add_argument("--save_path", type=str, default="./demo/demo.avi")
+    parser.add_argument("--save_path", type=str, default="./demo/demo.mp4")
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
     return parser.parse_args()
 
