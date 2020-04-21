@@ -61,18 +61,18 @@ class VideoTracker(object):
             im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
 
             # do detection
-            bbox_xyxyc = np.concatenate([
+            bbox_tlbrc = np.concatenate([
                 self.bbox[idx_frame - 1][1],
                 self.bbox[idx_frame - 1][2]],
                 axis=0
             )
-            if len(bbox_xyxyc) > 0:
+            if len(bbox_tlbrc) > 0:
                 bbox_xywh = np.concatenate([
-                    bbox_xyxyc[:, :2],
-                    bbox_xyxyc[:, 2:4] - bbox_xyxyc[:, :2]
+                    (bbox_tlbrc[:, :2] + bbox_tlbrc[:, 2:4]) / 2,
+                    bbox_tlbrc[:, 2:4] - bbox_tlbrc[:, :2]
                 ], axis=1)
                 bbox_xywh[:, 3:] *= 1.2  # bbox dilation just in case bbox too small
-                cls_conf = bbox_xyxyc[:, 4]
+                cls_conf = bbox_tlbrc[:, 4]
 
                 # do tracking
                 outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
