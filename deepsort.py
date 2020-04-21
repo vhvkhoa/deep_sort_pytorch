@@ -67,12 +67,12 @@ class VideoTracker(object):
                 axis=0
             )
             if len(bbox_xyxyc) > 0:
-                bbox_xywh = [
+                bbox_xywh = np.array([
                     bbox_xyxyc[:, 0],
                     bbox_xyxyc[:, 1],
                     bbox_xyxyc[2] - bbox_xyxyc[0],
                     bbox_xyxyc[3] - bbox_xyxyc[1]
-                ]
+                ])
                 bbox_xywh[:, 3:] *= 1.2  # bbox dilation just in case bbox too small
                 cls_conf = bbox_xyxyc[:, 4]
 
