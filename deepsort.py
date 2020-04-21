@@ -2,15 +2,18 @@ import os
 import cv2
 import time
 import argparse
+import json
+
+import numpy as np
 import torch
 import warnings
-import numpy as np
 
 from detector import build_detector
 from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
 from utils.log import logger
+
 
 def write_results(filename, results, data_type):
     if data_type == 'mot':
@@ -59,8 +62,8 @@ class VideoTracker(object):
             self.bbox = json.load(f)
 
         if self.args.save_path:
-            fourcc =  cv2.VideoWriter_fourcc(*'MJPG')
-            self.writer = cv2.VideoWriter(self.args.save_path, fourcc, 20, (self.im_width,self.im_height))
+            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+            self.writer = cv2.VideoWriter(self.args.save_path, fourcc, 20, (self.im_width, self.im_height))
 
         return self
 
@@ -81,18 +84,20 @@ class VideoTracker(object):
             im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
 
             # do detection
-            bbox_xywh, cls_conf, cls_ids = np.concatenate([
-				self.bbox[idx_frame - 1][1],
-				self.bbox[idx_frame - 1][2]],
-				axis=0
-			)
-            if bbox_xywh is not None:
-                # select person class
-                mask = cls_ids==0
-
-                bbox_xywh = bbox_xywh[mask]
-                bbox_xywh[:,3:] *= 1.2 # bbox dilation just in case bbox too small
-                cls_conf = cls_conf[mask]
+            bbox_xyxyc = np.concatenate([
+                self.bbox[idx_frame - 1][1],
+                self.bbox[idx_frame - 1][2]],
+                axis=0
+            )
+            if len(bbox_xyxyc) > 0:
+                bbox_xywh = [
+                    bbox_xyxyc[:, 0],
+                    bbox_xyxyc[:, 1],
+                    bbox_xyxyc[2] - bbox_xyxyc[0],
+                    bbox_xyxyc[3] - bbox_xyxyc[1]
+                ]
+                bbox_xywh[:, 3:] *= 1.2  # bbox dilation just in case bbox too small
+                cls_conf = bbox_xyxyc[:, 4]
 
                 # do tracking
                 outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
@@ -100,21 +105,17 @@ class VideoTracker(object):
                 # draw boxes for visualization
                 if len(outputs) > 0:
                     bbox_tlwh = []
-                    bbox_xyxy = outputs[:,:4]
-                    identities = outputs[:,-1]
+                    bbox_xyxy = outputs[:, :4]
+                    identities = outputs[:, -1]
                     ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
 
                     for bb_xyxy in bbox_xyxy:
                         bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
 
-                    results.append((idx_frame-1, bbox_tlwh, identities))
+                    results.append((idx_frame - 1, bbox_tlwh, identities))
 
             end = time.time()
-            print("time: {:.03f}s, fps: {:.03f}".format(end-start, 1/(end-start)))
-
-            if self.args.display:
-                cv2.imshow("test", ori_im)
-                cv2.waitKey(1)
+            print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
 
             if self.args.save_path:
                 self.writer.write(ori_im)
@@ -136,7 +137,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     args = parse_args()
     cfg = get_config()
     cfg.merge_from_file(args.config_detection)
@@ -144,4 +145,3 @@ if __name__=="__main__":
 
     with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
-
