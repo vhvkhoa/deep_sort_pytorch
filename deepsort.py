@@ -2,7 +2,7 @@ import os
 import cv2
 import time
 import argparse
-import json
+import pickle as pkl
 
 import numpy as np
 import torch
@@ -36,7 +36,7 @@ class VideoTracker(object):
         assert self.vdo.isOpened()
 
         with open(self.args.box_file, 'r') as f:
-            self.bbox = json.load(f)
+            self.bbox = pkl.load(f)
 
         if self.args.save_path:
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
