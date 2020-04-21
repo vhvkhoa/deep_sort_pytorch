@@ -90,10 +90,7 @@ class Net(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         # B x 128
-        f = x.div(x.norm(p=2, dim=1, keepdim=True))
-        # classifier
-        x = self.classifier(f)
-        return x, f
+        return x.div(x.norm(p=2, dim=1, keepdim=True))
 
 
 if __name__ == '__main__':
