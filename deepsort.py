@@ -66,7 +66,6 @@ class VideoTracker(object):
                 self.bbox[idx_frame - 1][2]],
                 axis=0
             )
-            print(bbox_tlbrc[:10])
             if len(bbox_tlbrc) > 0:
                 bbox_xywh = np.concatenate([
                     (bbox_tlbrc[:, :2] + bbox_tlbrc[:, 2:4]) / 2,
