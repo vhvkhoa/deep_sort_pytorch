@@ -66,12 +66,13 @@ class VideoTracker(object):
                 self.bbox[idx_frame - 1][2]],
                 axis=0
             )
+            print(bbox_tlbrc[:10])
             if len(bbox_tlbrc) > 0:
                 bbox_xywh = np.concatenate([
                     (bbox_tlbrc[:, :2] + bbox_tlbrc[:, 2:4]) / 2,
                     bbox_tlbrc[:, 2:4] - bbox_tlbrc[:, :2]
                 ], axis=1)
-                bbox_xywh[:, 3:] *= 1.2  # bbox dilation just in case bbox too small
+                bbox_xywh[:, 2:] *= 1.2  # bbox dilation just in case bbox too small
                 cls_conf = bbox_tlbrc[:, 4]
 
                 # do tracking
