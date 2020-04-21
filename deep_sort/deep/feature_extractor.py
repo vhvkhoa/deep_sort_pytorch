@@ -6,6 +6,7 @@ import logging
 
 from .model import Net
 
+
 class Extractor(object):
     def __init__(self, model_path, use_cuda=True):
         self.net = Net(reid=True)
@@ -15,13 +16,11 @@ class Extractor(object):
         logger = logging.getLogger("root.tracker")
         logger.info("Loading weights from {}... Done!".format(model_path))
         self.net.to(self.device)
-        self.size = (64, 128)
+        self.size = (128, 128)
         self.norm = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ])
-        
-
 
     def _preprocess(self, im_crops):
         """
@@ -37,7 +36,6 @@ class Extractor(object):
 
         im_batch = torch.cat([self.norm(_resize(im, self.size)).unsqueeze(0) for im in im_crops], dim=0).float()
         return im_batch
-
 
     def __call__(self, im_crops):
         im_batch = self._preprocess(im_crops)
