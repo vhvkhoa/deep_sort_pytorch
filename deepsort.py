@@ -109,7 +109,7 @@ def parse_args():
     parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
     parser.add_argument("--frame_interval", type=int, default=1)
     parser.add_argument("--class_names", type=list, default=['car', 'truck'])
-    parser.add_argument("--save_path", type=str, default="./demo/demo.mp4")
+    parser.add_argument("--save_dir", type=str, default="./deepsort_centernet_outputs/")
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
     return parser.parse_args()
 
