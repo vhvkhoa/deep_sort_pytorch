@@ -120,6 +120,6 @@ if __name__ == "__main__":
     cfg.merge_from_file(args.config_deepsort)
 
     for video_path in tqdm(glob(os.path.join(args.VIDEO_DIR, '*.mp4'))):
-        args.box_file = os.path.join(args.BOX_DIR, os.path.basename(video_path) + '.json')
+        args.box_file = os.path.join(args.BOX_DIR, os.path.basename(video_path) + '.pkl')
         with VideoTracker(cfg, args, video_path=video_path) as vdo_trk:
             vdo_trk.run()
