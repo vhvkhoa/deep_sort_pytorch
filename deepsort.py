@@ -55,8 +55,7 @@ class VideoTracker(object):
         results = []
         idx_frame = 0
         while self.vdo.grab():
-            idx_frame += 1
-            if idx_frame % self.args.frame_interval:
+            if (idx_frame + 1) % self.args.frame_interval:
                 continue
 
             # start = time.time()
@@ -65,8 +64,8 @@ class VideoTracker(object):
 
             # do detection
             bbox_tlbrc = np.concatenate([
-                self.bbox[idx_frame - 1][1],
-                self.bbox[idx_frame - 1][2]],
+                self.bbox[idx_frame][1],
+                self.bbox[idx_frame][2]],
                 axis=0
             )
             conf_mask = bbox_tlbrc[:, 4] >= 0.4
@@ -84,23 +83,25 @@ class VideoTracker(object):
 
                 # draw boxes for visualization
                 if len(outputs) > 0:
-                    bbox_tlwh = []
+                    # bbox_tlwh = []
                     bbox_xyxy = outputs[:, :4]
                     identities = outputs[:, -1]
 
                     if self.args.save_dir and self.args.display:
                         ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
 
-                    for bb_xyxy in bbox_xyxy:
-                        bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
+                    # for bb_xyxy in bbox_xyxy:
+                    #     bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
 
-                    results.append((idx_frame - 1, bbox_tlwh, identities))
+                    # results.append((idx_frame - 1, bbox_tlwh, identities))
+                    results.append((idx_frame, bbox_xyxy, identities))
 
             # end = time.time()
             # print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
 
             if self.args.save_dir and self.args.display:
                 self.writer.write(ori_im)
+            idx_frame += 1
 
         with open(os.path.join(self.args.save_dir, os.path.basename(self.video_path) + '.pkl'), 'rb') as f:
             pkl.dump(results, f)
