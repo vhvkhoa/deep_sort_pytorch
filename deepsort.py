@@ -103,7 +103,7 @@ class VideoTracker(object):
                 self.writer.write(ori_im)
             idx_frame += 1
 
-        with open(os.path.join(self.args.save_dir, os.path.basename(self.video_path) + '.pkl'), 'rb') as f:
+        with open(os.path.join(self.args.save_dir, os.path.basename(self.video_path) + '.pkl'), 'wb') as f:
             pkl.dump(results, f)
 
 
