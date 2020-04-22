@@ -1,6 +1,7 @@
 import os
+import glob
 import cv2
-import time
+# import time
 import argparse
 import pickle as pkl
 
@@ -8,7 +9,7 @@ import numpy as np
 import torch
 import warnings
 
-from detector import build_detector
+# from detector import build_detector
 from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
@@ -56,7 +57,7 @@ class VideoTracker(object):
             if idx_frame % self.args.frame_interval:
                 continue
 
-            start = time.time()
+            # start = time.time()
             _, ori_im = self.vdo.retrieve()
             im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
 
@@ -91,8 +92,8 @@ class VideoTracker(object):
 
                     results.append((idx_frame - 1, bbox_tlwh, identities))
 
-            end = time.time()
-            print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
+            # end = time.time()
+            # print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
 
             if self.args.save_path:
                 self.writer.write(ori_im)
@@ -100,10 +101,10 @@ class VideoTracker(object):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("VIDEO_PATH", type=str)
+    parser.add_argument("VIDEO_DIR", type=str)
+    parser.add_argument("BOX_DIR", type=str, default="./bboxes/")
     parser.add_argument("--config_detection", type=str, default="./configs/yolov3.yaml")
     parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
-    parser.add_argument("--box_file", type=str, default="./bboxes/cam_1.mp4.json")
     parser.add_argument("--frame_interval", type=int, default=1)
     parser.add_argument("--class_names", type=list, default=['car', 'truck'])
     parser.add_argument("--save_path", type=str, default="./demo/demo.mp4")
@@ -117,5 +118,7 @@ if __name__ == "__main__":
     cfg.merge_from_file(args.config_detection)
     cfg.merge_from_file(args.config_deepsort)
 
-    with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
-        vdo_trk.run()
+    for video_path in glob.glob(os.path.join(args.VIDEO_DIR, '*.mp4')):
+        args.box_path = os.path.join(args.BOX_DIR, os.path.basename(video_path) + '.json')
+        with VideoTracker(cfg, args, video_path=video_path) as vdo_trk:
+            vdo_trk.run()
