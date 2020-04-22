@@ -41,8 +41,9 @@ class VideoTracker(object):
             self.bbox = pkl.load(f)
 
         if self.args.save_path:
-            fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-            self.writer = cv2.VideoWriter(self.args.save_path, fourcc, 30, (self.im_width, self.im_height))
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            save_path = os.path.join(self.args.save_dir, os.path.basename(self.video_path))
+            self.writer = cv2.VideoWriter(save_path, fourcc, 30, (self.im_width, self.im_height))
 
         return self
 
