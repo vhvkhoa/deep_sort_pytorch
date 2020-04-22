@@ -1,5 +1,5 @@
 import os
-import glob
+from glob import glob
 import cv2
 # import time
 import argparse
@@ -8,6 +8,7 @@ import pickle as pkl
 import numpy as np
 import torch
 import warnings
+from tqdm import tqdm
 
 # from detector import build_detector
 from deep_sort import build_tracker
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     cfg.merge_from_file(args.config_detection)
     cfg.merge_from_file(args.config_deepsort)
 
-    for video_path in glob.glob(os.path.join(args.VIDEO_DIR, '*.mp4')):
-        args.box_path = os.path.join(args.BOX_DIR, os.path.basename(video_path) + '.json')
+    for video_path in tqdm(glob(os.path.join(args.VIDEO_DIR, '*.mp4'))):
+        args.box_file = os.path.join(args.BOX_DIR, os.path.basename(video_path) + '.json')
         with VideoTracker(cfg, args, video_path=video_path) as vdo_trk:
             vdo_trk.run()
