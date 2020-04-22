@@ -40,9 +40,9 @@ class VideoTracker(object):
         with open(self.args.box_file, 'rb') as f:
             self.bbox = pkl.load(f)
 
-        if self.args.save_dir:
+        if self.args.save_dir and self.args.display:
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            save_path = os.path.join(self.args.save_dir, os.path.basename(self.video_path))
+            save_path = os.path.join(self.args.save_dir, 'videos', os.path.basename(self.video_path))
             self.writer = cv2.VideoWriter(save_path, fourcc, 30, (self.im_width, self.im_height))
 
         return self
@@ -87,7 +87,9 @@ class VideoTracker(object):
                     bbox_tlwh = []
                     bbox_xyxy = outputs[:, :4]
                     identities = outputs[:, -1]
-                    ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
+
+                    if self.args.save_dir and self.args.display:
+                        ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
 
                     for bb_xyxy in bbox_xyxy:
                         bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
@@ -97,8 +99,11 @@ class VideoTracker(object):
             # end = time.time()
             # print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
 
-            if self.args.save_dir:
+            if self.args.save_dir and self.args.display:
                 self.writer.write(ori_im)
+
+        with open(os.path.join(self.args.save_dir, os.path.basename(self.video_path) + '.pkl'), 'rb') as f:
+            pkl.dump(results, f)
 
 
 def parse_args():
@@ -110,6 +115,7 @@ def parse_args():
     parser.add_argument("--frame_interval", type=int, default=1)
     parser.add_argument("--class_names", type=list, default=['car', 'truck'])
     parser.add_argument("--save_dir", type=str, default="./deepsort_centernet_outputs/")
+    parser.add_argument("--not_display", dest="display", action="store_false", default=True)
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
     return parser.parse_args()
 
