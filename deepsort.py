@@ -97,7 +97,7 @@ class VideoTracker(object):
             # end = time.time()
             # print("time: {:.03f}s, fps: {:.03f}".format(end - start, 1 / (end - start)))
 
-            if self.args.save_path:
+            if self.args.save_dir:
                 self.writer.write(ori_im)
 
 
