@@ -28,7 +28,7 @@ class DeepSort(object):
         # generate detections
         features = self._get_features(bbox_xywh, ori_img)
         bbox_tlwh = self._xywh_to_tlwh(bbox_xywh)
-        detections = [Detection(bbox_tlwh[i], conf, features[i]) for i, conf in enumerate(confidences) if conf > self.min_confidence]
+        detections = [Detection(bbox_tlwh[i], conf, features[i]) for i, conf in enumerate(confidences)]
 
         # run on non-maximum supression
         boxes = np.array([d.tlwh for d in detections])
